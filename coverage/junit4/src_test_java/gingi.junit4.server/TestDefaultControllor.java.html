@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>TestDefaultControllor.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">junit4 (2012. 11. 19 오후 9:54:41)</a> &gt; <a href="../../index.html" class="el_group">junit4</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.html" class="el_package">gingi.junit4.server</a> &gt; <span class="el_source">TestDefaultControllor.java</span></div><h1>TestDefaultControllor.java</h1><pre class="source lang-java linenums">package gingi.junit4.server;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import gingi.junit4.Server.DefaultController;
+import gingi.junit4.Server.ErrorResponse;
+import gingi.junit4.Server.Request;
+import gingi.junit4.Server.RequestHandler;
+import gingi.junit4.Server.Response;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+<span class="fc" id="L17">public class TestDefaultControllor {</span>
+
+	private DefaultController controller;
+	private Request request;
+	private RequestHandler handler;
+
+	@Before
+	public void instantiate() throws Exception {
+<span class="fc" id="L25">		controller = new DefaultController();</span>
+<span class="fc" id="L26">		request = new SampleRequest();</span>
+<span class="fc" id="L27">		handler = new SampleHandler();</span>
+<span class="fc" id="L28">		controller.addHandler(request, handler);</span>
+<span class="fc" id="L29">	}</span>
+
+	@Test
+	@Ignore(value = &quot;Ignore&quot;)
+	public void testMethod() {
+<span class="nc" id="L34">		throw new RuntimeException(&quot;implement me&quot;);</span>
+	}
+
+	@Test
+	public void testAddHandler() {
+
+		/*
+		 * instance initalize Request request = new SampleRequest();
+		 * RequestHandler handler = new SampleHandler();
+		 * controller.addHandler(request, handler);
+		 */
+<span class="fc" id="L45">		RequestHandler handler2 = controller.getHandler(request);</span>
+<span class="fc" id="L46">		assertSame(</span>
+<span class="fc" id="L47">				&quot;Handler we set in controller should be the same handler we get&quot;,</span>
+<span class="fc" id="L48">				handler2, handler);</span>
+<span class="fc" id="L49">	}</span>
+
+	@Test
+	public void testProcessRequest() {
+
+		/*
+		 * instance init Request request = new SampleRequest(); RequestHandler
+		 * handler = new SampleHandler(); controller.addHandler(request,
+		 * handler);
+		 */
+<span class="fc" id="L59">		Response response = controller.processRequest(request);</span>
+<span class="fc" id="L60">		assertNotNull(&quot;Muset not return a null response&quot;, response);</span>
+<span class="fc" id="L61">		assertEquals(&quot;Response should be of type SampleResponse&quot;,</span>
+<span class="fc" id="L62">				SampleResponse.class, response.getClass());</span>
+<span class="fc" id="L63">		assertEquals(&quot;Response should be of type SampleResponse&quot;,</span>
+<span class="fc" id="L64">				new SampleResponse(), response);</span>
+<span class="fc" id="L65">	}</span>
+
+	@Test
+	public void testPorcessRequestAnswersErrorResponse() {
+<span class="fc" id="L69">		SampleRequest request = new SampleRequest(&quot;testError&quot;);</span>
+<span class="fc" id="L70">		SampleExceptionHandler handler = new SampleExceptionHandler();</span>
+<span class="fc" id="L71">		controller.addHandler(request, handler);</span>
+<span class="fc" id="L72">		Response response = controller.processRequest(request);</span>
+<span class="fc" id="L73">		assertNotNull(&quot;Must not return a null response&quot;, response);</span>
+<span class="fc" id="L74">		assertEquals(ErrorResponse.class, response.getClass());</span>
+<span class="fc" id="L75">	}</span>
+
+	@Test(expected = RuntimeException.class)
+	public void testGetHandlerNotDefined() {
+<span class="nc" id="L79">		SampleRequest request = new SampleRequest(&quot;testNotDefinded&quot;);</span>
+		// 　다음줄에서 RuntimeExceptiom을 발생시킬 것이다.
+<span class="nc" id="L81">		controller.getHandler(request);</span>
+<span class="nc" id="L82">	}</span>
+
+	@Test(expected = RuntimeException.class)
+	public void testAddRequestDuplicateName() {
+<span class="nc" id="L86">		SampleRequest request = new SampleRequest();</span>
+<span class="nc" id="L87">		SampleHandler handler = new SampleHandler();</span>
+
+		// 　다음줄에서 RuntimeExceptiom을 발생시킬 것이다.
+<span class="nc" id="L90">		controller.addHandler(request, handler);</span>
+<span class="nc" id="L91">	}</span>
+	
+	//　test 건너뛰
+	@Test(timeout = 130)
+	@Ignore(value = &quot;Ignore for now until new decide a decent time - limit&quot;)
+	public void testProcessMultipleRequestsTimeout() {
+		Request request;
+<span class="nc" id="L98">		Response response = new SampleResponse();</span>
+<span class="nc" id="L99">		RequestHandler handler = new SampleHandler();</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">		for (int i = 0; i &lt; 99999 ; i++) {</span>
+<span class="nc" id="L101">			request = new SampleRequest(String.valueOf(i));</span>
+<span class="nc" id="L102">			controller.addHandler(request, handler);</span>
+<span class="nc" id="L103">			response = controller.processRequest(request);</span>
+<span class="nc" id="L104">			assertNotNull(response);</span>
+<span class="nc" id="L105">			assertNotSame(ErrorResponse.class, response.getClass());</span>
+		}
+<span class="nc" id="L107">	}</span>
+
+	private class SampleRequest implements Request {
+		private static final String DEFAULT_NAME = &quot;Test&quot;;
+		private String name;
+
+<span class="fc" id="L113">		public SampleRequest(String name) {</span>
+<span class="fc" id="L114">			this.name = name;</span>
+<span class="fc" id="L115">		}</span>
+
+		public SampleRequest() {
+<span class="fc" id="L118">			this(DEFAULT_NAME);</span>
+<span class="fc" id="L119">		}</span>
+
+		public String getName() {
+			// TODO Auto-generated method stub
+<span class="fc" id="L123">			return this.name;</span>
+		}
+	}
+
+<span class="fc" id="L127">	private class SampleHandler implements RequestHandler {</span>
+		public Response process(Request request) throws Exception {
+<span class="fc" id="L129">			return new SampleResponse();</span>
+		}
+	}
+
+<span class="fc" id="L133">	private class SampleResponse implements Response {</span>
+		private static final String NAME = &quot;test&quot;;
+
+		public String getName() {
+<span class="fc" id="L137">			return NAME;</span>
+		}
+
+		public boolean equals(Object object) {
+<span class="fc" id="L141">			boolean result = false;</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">			if (object instanceof SampleResponse) {</span>
+<span class="fc" id="L143">				result = ((SampleResponse) object).getName().equals(getName());</span>
+			}
+<span class="fc" id="L145">			return result;</span>
+		}
+	}
+
+<span class="fc" id="L149">	private class SampleExceptionHandler implements RequestHandler {</span>
+
+		public Response process(Request request) throws Exception {
+			// TODO Auto-generated method stub
+<span class="nc" id="L153">			return (Response) new Exception(&quot;error processing request&quot;);</span>
+		}
+
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.0.201210061924</span>junit4 (2012. 11. 19 오후 9:54:41)</div></body></html>
